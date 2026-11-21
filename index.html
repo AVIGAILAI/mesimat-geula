@@ -651,6 +651,13 @@ body.nohud #stage{padding-top:calc(var(--u)*3.6);padding-bottom:calc(var(--u)*3.
 @media (prefers-reduced-motion: reduce){
   .timer.warn,.timer.done,.opts .opt.correct,.unlock .gate.anticip{animation:none}
 }
+
+/* פלאפון לאורך: המשחק מסתובב לרוחב וממלא את כל המסך (גם כשנעילת הסיבוב מופעלת) */
+html.rot{--u:min(calc(var(--aw) / 100), calc(var(--ah) * 1.78 / 100))}
+html.rot body{position:fixed;top:0;left:0;width:var(--aw);height:var(--ah);transform-origin:0 0;transform:translateX(var(--ah)) rotate(90deg)}
+html.rot .f-title{max-width:calc(var(--aw) * .6)}
+html.rot .f-portrait{height:min(calc(var(--u)*31), calc(var(--ah) * .62))}
+html.rot .vwrap{width:min(100%, calc((var(--ah) - var(--u)*16) * 16 / 9))}
 </style>
 </head>
 <body class="nohud">
@@ -2060,8 +2067,8 @@ const PORTRAIT = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAU
 let fxToken = 0;
 function confetti(ms = 5000){
   const c = $('#fx'), x = c.getContext('2d'), dpr = window.devicePixelRatio || 1;
-  c.width = innerWidth * dpr; c.height = innerHeight * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const W = innerWidth, H = innerHeight, cols = ['#f7dc8f','#e3b54a','#ffffff','#d2423a', ...S.teams.map(t => t.color)];
+  c.width = appW() * dpr; c.height = appH() * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const W = appW(), H = appH(), cols = ['#f7dc8f','#e3b54a','#ffffff','#d2423a', ...S.teams.map(t => t.color)];
   const P = Array.from({length: 260}, () => ({ x: Math.random() * W, y: -Math.random() * H * .6 - 20, vx: (Math.random() - .5) * 3, vy: 2 + Math.random() * 4,
     r: Math.random() * 6.28, vr: (Math.random() - .5) * .3, w: 6 + Math.random() * 9, h: 9 + Math.random() * 12, c: cols[rnd(cols.length)] }));
   const tok = ++fxToken, t0 = performance.now();
@@ -2091,7 +2098,7 @@ function shake(amount){
 function shakeStep(now){
   const dt = Math.min(.05, (now - shakeLast) / 1000); shakeLast = now;
   trauma = Math.max(0, trauma - 1.3 * dt); shakeT += dt * 32;
-  const app = $('#app'), s = trauma * trauma, u = Math.min(innerWidth / 100, innerHeight * 1.78 / 100);
+  const app = $('#app'), s = trauma * trauma, u = Math.min(appW() / 100, appH() * 1.78 / 100);
   if (trauma > 0 && !calm()){
     app.style.transform = `translate(${(u * 1.4 * s * Math.sin(shakeT * 1.7)).toFixed(2)}px,${(u * .9 * s * Math.sin(shakeT * 2.3)).toFixed(2)}px) rotate(${(.7 * s * Math.sin(shakeT * 1.1)).toFixed(3)}deg)`;
     shakeRaf = requestAnimationFrame(shakeStep);
@@ -2105,7 +2112,7 @@ function flash(color = '#f7dc8f'){
 function flyPts(fromEl, teamIdx, text){
   const chip = document.querySelector(`#scores .chip[data-i="${teamIdx}"]`);
   if (!fromEl || !chip || calm()) return 0;
-  const a = fromEl.getBoundingClientRect(), b = chip.getBoundingClientRect();
+  const a = rectOf(fromEl), b = rectOf(chip);
   const x0 = a.left + a.width / 2, y0 = a.top + a.height / 2;
   const dx = b.left + b.width / 2 - x0, dy = b.top + b.height / 2 - y0;
   const el = document.createElement('div'); el.className = 'fly-pts'; el.textContent = text;
@@ -2126,10 +2133,10 @@ function stopFx(){ fxToken++; const c = $('#fx'); c.getContext('2d').clearRect(0
 
 /* FLIP reorder animation */
 function flip(container, ordered, ms = 900){
-  const first = new Map(ordered.map(el => [el, el.getBoundingClientRect()]));
+  const first = new Map(ordered.map(el => [el, rectOf(el)]));
   ordered.forEach(el => container.appendChild(el));
   ordered.forEach(el => {
-    const f = first.get(el), l = el.getBoundingClientRect();
+    const f = first.get(el), l = rectOf(el);
     el.style.transition = 'none'; el.style.animation = 'none';
     el.style.transform = `translate(${f.left - l.left}px, ${f.top - l.top}px)`;
   });
@@ -2205,6 +2212,27 @@ function candleSVG(){
 }
 
 /* keep every screen inside the stage, whatever the screen size */
+/* פלאפון לאורך: מסובבים את כל המשחק ב־90 מעלות */
+const isRot = () => document.documentElement.classList.contains('rot');
+const appW = () => isRot() ? innerHeight : innerWidth;
+const appH = () => isRot() ? innerWidth : innerHeight;
+// מיקום של אלמנט במערכת הצירים של המשחק (כשהמשחק מסובב, המסך "שוכב על הצד")
+function rectOf(el){
+  const r = el.getBoundingClientRect();
+  if (!isRot()) return r;
+  const W = innerWidth;
+  return { left: r.top, top: W - r.right, width: r.height, height: r.width, right: r.bottom, bottom: W - r.left };
+}
+function setRot(){
+  const root = document.documentElement;
+  const on = innerHeight > innerWidth && innerWidth < 820 && matchMedia('(pointer: coarse)').matches;
+  root.classList.toggle('rot', on);
+  root.style.setProperty('--aw', (on ? innerHeight : innerWidth) + 'px');
+  root.style.setProperty('--ah', (on ? innerWidth : innerHeight) + 'px');
+}
+setRot();
+addEventListener('resize', setRot);
+addEventListener('orientationchange', () => setTimeout(setRot, 150));
 const fitRO = new ResizeObserver(() => fit());
 function fit(){
   const el = stage.firstElementChild; if (!el || el.classList.contains('finale')) return;
@@ -2705,7 +2733,7 @@ const R = {
     const run = () => {
       phase = 'run'; setNext('', false);
       const chips = [...$('#scores').children];
-      const lampR = $('#lamp').getBoundingClientRect();
+      const lampR = rectOf($('#lamp'));
       const tx = lampR.left + lampR.width / 2, ty = lampR.top + lampR.height * .2;
       const dots = [];
       per.forEach((n, i) => { const shown = Math.min(n, 14); for (let k = 0; k < shown; k++) dots.push({ i, w: n / shown }); });
@@ -2722,7 +2750,7 @@ const R = {
       };
       dots.forEach((d, k) => later(() => {
         if (tok !== animTok) return;
-        const cr = chips[d.i].getBoundingClientRect();
+        const cr = rectOf(chips[d.i]);
         const sx = cr.left + cr.width / 2 + (Math.random() - .5) * 30, sy = cr.top + cr.height / 2;
         const el = document.createElement('div'); el.className = 'spark-dot'; el.style.setProperty('--c', S.teams[d.i].color);
         document.body.appendChild(el);
