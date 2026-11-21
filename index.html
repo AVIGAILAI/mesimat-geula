@@ -675,6 +675,13 @@ html.phone .q{width:100%}
 html.phone .explain{font-size:calc(var(--u)*1.9)}
 html.phone .pick{font-size:calc(var(--u)*1.9)}
 
+/* פלאפון: הקיר של הכלא כהה יותר, והכרטיסים כמעט אטומים, כדי שהכיתוב יבלוט */
+html.phone body::after{background:radial-gradient(ellipse 85% 80% at 50% 45%, rgba(8,7,10,.55) 40%, rgba(0,0,0,.85))}
+html.phone .card{background:linear-gradient(180deg,rgba(32,27,37,.96),rgba(19,16,22,.96))}
+html.phone .explain{background:rgba(12,10,14,.92)}
+html.phone .chip{background:rgba(10,8,12,.88)}
+html.phone .pick, html.phone .btn-ghost, html.phone .beat{background:rgba(10,8,12,.85)}
+html.phone .gintro .rule, html.phone .contact span{background:rgba(40,31,14,.92)}
 /* לרוחב: הגובה קטן. פס עליון בשורה אחת, כפתור "הבא" בפינה, והסיום קטן יותר */
 html.land #hud{flex-wrap:nowrap;justify-content:space-between;padding:calc(var(--u)*.8) calc(var(--u)*2) 0;padding-inline-end:calc(var(--u)*30);min-height:0}
 html.land .days{min-width:calc(var(--u)*13)}
