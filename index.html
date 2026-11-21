@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- המשחק כבר כהה: מבקשים מ"מצב כהה" של הפלאפון לא לצבוע אותו מחדש (אחרת הזהב יוצא חום-כהה) -->
+<meta name="color-scheme" content="dark only">
+<meta name="darkreader-lock">
 <title>משימת גאולה</title>
 <meta name="description" content="משחק כיתתי לי״ט כסלו: 53 ימים במבצר, 5 שערים, גלגל הפתעות ואתגרי כיתה. עובד בלי אינטרנט, למסך גדול.">
 <style>
@@ -96,7 +99,10 @@
   --display:'Suez One', 'Times New Roman', serif;
   --body:'Assistant', Arial, sans-serif;
   --u:min(1vw, 1.78vh);
+  color-scheme:dark only;
 }
+/* דפדפנים עם "מצב כהה" (למשל סמסונג) משאירים את האתר כמו שהוא כשהוא מצהיר שיש לו עיצוב כהה משלו */
+@media (prefers-color-scheme: dark){ :root{color-scheme:dark only} }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;overflow:hidden}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:calc(var(--u)*1.8);-webkit-font-smoothing:antialiased;user-select:none}
