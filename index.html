@@ -652,12 +652,106 @@ body.nohud #stage{padding-top:calc(var(--u)*3.6);padding-bottom:calc(var(--u)*3.
   .timer.warn,.timer.done,.opts .opt.correct,.unlock .gate.anticip{animation:none}
 }
 
-/* פלאפון לאורך: המשחק מסתובב לרוחב וממלא את כל המסך (גם כשנעילת הסיבוב מופעלת) */
-html.rot{--u:min(calc(var(--aw) / 100), calc(var(--ah) * 1.78 / 100))}
-html.rot body{position:fixed;top:0;left:0;width:var(--aw);height:var(--ah);transform-origin:0 0;transform:translateX(var(--ah)) rotate(90deg)}
-html.rot .f-title{max-width:calc(var(--aw) * .6)}
-html.rot .f-portrait{height:min(calc(var(--u)*31), calc(var(--ah) * .62))}
-html.rot .vwrap{width:min(100%, calc((var(--ah) - var(--u)*16) * 16 / 9))}
+
+/* ===== מצב פלאפון (לאורך ולרוחב): גודל טקסט של פלאפון, המסכים מסודרים מחדש, ואם משהו לא נכנס גוללים ===== */
+html.phone, html.phone body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+html.phone #app{position:relative;inset:auto;min-height:100dvh}
+html.phone #stage{overflow:visible;padding:calc(var(--u)*1.5) calc(var(--u)*1.6)}
+html.phone #stage > *{scale:none!important;max-width:100%}
+html.phone #hud{flex-wrap:wrap;justify-content:center;gap:calc(var(--u)*1.2) calc(var(--u)*2.4);padding-top:calc(var(--u)*5.4)}
+html.phone .spacer{display:none}
+html.phone .days{min-width:calc(var(--u)*15)}
+html.phone #tools{position:absolute;opacity:.8}
+html.phone #tools button{font-size:calc(var(--u)*1.7);padding:calc(var(--u)*.45) calc(var(--u)*.75)}
+html.phone .title-about{position:absolute;top:calc(var(--u)*5.4);inset-inline-start:50%;translate:50% 0;white-space:nowrap}
+html.phone #scores{padding-inline-end:calc(var(--u)*2);padding-bottom:calc(var(--u)*8.6)}
+html.phone #next{inset-inline-end:auto;left:50%;translate:-50% 0;bottom:calc(var(--u)*1.2);white-space:nowrap}
+html.phone body.nohud #stage{padding-bottom:calc(var(--u)*9)}
+html.phone #app::after{content:"";position:fixed;left:0;right:0;bottom:0;height:calc(var(--u)*8.4);background:linear-gradient(180deg,rgba(12,11,15,0),rgba(12,11,15,.96) 42%);z-index:69;pointer-events:none}
+html.phone .gintro .gate{height:calc(var(--u)*24)}
+html.phone .wheel{width:calc(var(--u)*30)}
+html.phone .wside{width:calc(var(--u)*44)}
+html.phone .q{width:100%}
+html.phone .explain{font-size:calc(var(--u)*1.9)}
+html.phone .pick{font-size:calc(var(--u)*1.9)}
+
+/* לרוחב: הגובה קטן. פס עליון בשורה אחת, כפתור "הבא" בפינה, והסיום קטן יותר */
+html.land #hud{flex-wrap:nowrap;justify-content:space-between;padding:calc(var(--u)*.8) calc(var(--u)*2) 0;padding-inline-end:calc(var(--u)*30);min-height:0}
+html.land .days{min-width:calc(var(--u)*13)}
+html.land .days .num{font-size:calc(var(--u)*2.6)}
+html.land .slot{width:calc(var(--u)*4);height:calc(var(--u)*4.5);font-size:calc(var(--u)*2.8)}
+html.land .title-about{top:calc(var(--u)*4.4)}
+html.land #scores{padding-bottom:calc(var(--u)*1.2);padding-inline-end:calc(var(--u)*17);gap:calc(var(--u)*.6)}
+html.land .chip{padding:calc(var(--u)*.45) calc(var(--u)*.9);font-size:calc(var(--u)*1.6)}
+html.land #next{left:auto;translate:none;inset-inline-end:calc(var(--u)*1.6)}
+html.land #app::after{display:none}
+html.land body.nohud #stage{padding-bottom:calc(var(--u)*7)}
+/* לרוחב: הגובה קטן, אז מסך הסיום קטן יותר */
+html.land .f-portrait{height:calc(var(--u)*22)}
+html.land .f-main{gap:calc(var(--u)*3)}
+html.land .f-text{gap:calc(var(--u)*.7)}
+html.land .f-date{font-size:calc(var(--u)*2)}
+html.land .f-title{font-size:calc(var(--u)*4.4);max-width:calc(var(--u)*56)}
+html.land .f-verse{font-size:calc(var(--u)*3.2)}
+html.land .f-code span{width:calc(var(--u)*4.4);height:calc(var(--u)*5);font-size:calc(var(--u)*3.3)}
+html.land .f-chag{font-size:calc(var(--u)*2.2)}
+
+/* לאורך: הכול אחד מתחת לשני */
+html.port .title{font-size:calc(var(--u)*7.4)}
+html.port .sub{font-size:calc(var(--u)*2.3)}
+html.port .title-scr .row{flex-wrap:wrap;justify-content:center}
+html.port .setup{padding:calc(var(--u)*1.8) calc(var(--u)*2)}
+html.port .setup .lab{min-width:100%}
+html.port .seg button{padding:calc(var(--u)*.7) calc(var(--u)*1.3);font-size:calc(var(--u)*1.85)}
+html.port .tedit{grid-template-columns:1fr}
+html.port .gintro{flex-direction:column;text-align:center;gap:calc(var(--u)*2)}
+html.port .gintro .gate{height:calc(var(--u)*20)}
+html.port .gintro .txt{max-width:100%;align-items:center}
+html.port .gintro .rule{align-self:center}
+html.port .gintro h2{font-size:calc(var(--u)*5.4)}
+html.port .opts{grid-template-columns:1fr}
+html.port .qtext{font-size:calc(var(--u)*3.1)}
+html.port .tf{gap:calc(var(--u)*1.4)}
+html.port .tf .opt{font-size:calc(var(--u)*4);padding:calc(var(--u)*1.6)}
+html.port .tiles{gap:calc(var(--u)*.8)}
+html.port .tile{width:calc(var(--u)*5.6);height:calc(var(--u)*6.8);font-size:calc(var(--u)*4.2);border-radius:calc(var(--u)*.9)}
+html.port .clue{font-size:calc(var(--u)*2.3);padding:calc(var(--u)*1) calc(var(--u)*1.4)}
+html.port .tcard{font-size:calc(var(--u)*2.1);padding:calc(var(--u)*.8) calc(var(--u)*1.2)}
+html.port .pgrid{grid-template-columns:repeat(var(--cols),minmax(0,1fr));width:100%}
+html.port .unlock .gate{height:calc(var(--u)*24)}
+html.port .unlock h2{font-size:calc(var(--u)*3.4)}
+html.port .wheelscr{flex-direction:column;gap:calc(var(--u)*2)}
+html.port .wheel{width:calc(var(--u)*34)}
+html.port .wside{width:100%;text-align:center;align-items:center}
+html.port .wside h2{font-size:calc(var(--u)*4.6)}
+html.port .wres{justify-content:center}
+html.port .chal h2{font-size:calc(var(--u)*4.2)}
+html.port .mem-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+html.port .boxes{gap:calc(var(--u)*1.2)}
+html.port .gbox{width:calc(var(--u)*12.5);height:calc(var(--u)*15);font-size:calc(var(--u)*6)}
+html.port .gbox.open{font-size:calc(var(--u)*1.6);padding:calc(var(--u)*.8)}
+html.port .gbox.open .e{font-size:calc(var(--u)*3.6)}
+html.port .podscr h2{font-size:calc(var(--u)*4)}
+html.port .pod{width:calc(var(--u)*12.5)}
+html.port .pod .nm{font-size:calc(var(--u)*1.9)}
+html.port .rest{flex-wrap:wrap;justify-content:center}
+html.port .lightscr h2{font-size:calc(var(--u)*4.4)}
+html.port .f-main{flex-direction:column;gap:calc(var(--u)*2)}
+html.port .f-portrait{height:calc(var(--u)*22)}
+html.port .f-text{gap:calc(var(--u)*.9)}
+html.port .f-date{font-size:calc(var(--u)*2)}
+html.port .f-title{max-width:100%;font-size:calc(var(--u)*4.6)}
+html.port .f-verse{font-size:calc(var(--u)*3.3)}
+html.port .f-code span{width:calc(var(--u)*5);height:calc(var(--u)*5.8);font-size:calc(var(--u)*3.8)}
+html.port .f-chag{font-size:calc(var(--u)*2.3)}
+html.port .word{gap:calc(var(--u)*.8)}
+html.port .word span{width:calc(var(--u)*7.4);height:calc(var(--u)*8.8);font-size:calc(var(--u)*5.8)}
+html.port .credits{padding:calc(var(--u)*2) calc(var(--u)*1.8)}
+html.port .credits h2{font-size:calc(var(--u)*4.6)}
+html.port .offers{grid-template-columns:1fr 1fr}
+html.port .offer{font-size:calc(var(--u)*1.75)}
+html.port .about-facts{grid-template-columns:1fr 1fr}
+html.port .about-scroll{padding:calc(var(--u)*2.4) calc(var(--u)*2)}
 /* פלאפון: רקע כהה מאחורי הכיתוב במסך הסיום, כדי שיהיה קריא על הקרניים הבהירות */
 html.phone .f-text{padding:calc(var(--u)*2.2) calc(var(--u)*3.4);border-radius:calc(var(--u)*2.4);transition:background .8s .6s, box-shadow .8s .6s}
 html.phone .finale.open .f-text{background:linear-gradient(180deg,#1d1409,#120c05);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 0 0 calc(var(--u)*.3) rgba(227,181,74,.75), 0 calc(var(--u)*1) calc(var(--u)*5) rgba(0,0,0,.55)}
@@ -2232,12 +2326,18 @@ function rectOf(el){
   return { left: r.top, top: W - r.right, width: r.height, height: r.width, right: r.bottom, bottom: W - r.left };
 }
 function setRot(){
-  const root = document.documentElement;
-  const on = innerHeight > innerWidth && innerWidth < 820 && matchMedia('(pointer: coarse)').matches;
-  root.classList.toggle('rot', on);
-  root.classList.toggle('phone', matchMedia('(pointer: coarse)').matches && Math.min(innerWidth, innerHeight) < 600);
-  root.style.setProperty('--aw', (on ? innerHeight : innerWidth) + 'px');
-  root.style.setProperty('--ah', (on ? innerWidth : innerHeight) + 'px');
+  const root = document.documentElement, W = innerWidth, H = innerHeight;
+  const touch = matchMedia('(pointer: coarse)').matches || (navigator.maxTouchPoints || 0) > 0;
+  const phone = touch && Math.min(W, H) < 600;
+  const port = phone && H > W;
+  root.classList.remove('rot');
+  root.classList.toggle('phone', phone);
+  root.classList.toggle('port', port);
+  root.classList.toggle('land', phone && !port);
+  // בפלאפון: יחידת הגודל לפי רוחב המסך, כדי שהטקסט יהיה בגודל קריא (במחשב ובמקרן לא משתנה כלום)
+  if (phone) root.style.setProperty('--u', (port ? W / 44 : Math.min(W / 88, H / 24)).toFixed(2) + 'px');
+  else root.style.removeProperty('--u');
+  try { fit(); } catch(e) {}
 }
 setRot();
 addEventListener('resize', setRot);
@@ -2246,6 +2346,7 @@ const fitRO = new ResizeObserver(() => fit());
 function fit(){
   const el = stage.firstElementChild; if (!el || el.classList.contains('finale')) return;
   el.style.scale = '';
+  if (document.documentElement.classList.contains('phone')) return;   // בפלאפון גוללים במקום להקטין
   const cs = getComputedStyle(stage);
   const availH = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
   const availW = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
