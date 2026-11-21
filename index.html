@@ -660,7 +660,8 @@ html.rot .f-portrait{height:min(calc(var(--u)*31), calc(var(--ah) * .62))}
 html.rot .vwrap{width:min(100%, calc((var(--ah) - var(--u)*16) * 16 / 9))}
 /* פלאפון: רקע כהה מאחורי הכיתוב במסך הסיום, כדי שיהיה קריא על הקרניים הבהירות */
 html.phone .f-text{padding:calc(var(--u)*2.2) calc(var(--u)*3.4);border-radius:calc(var(--u)*2.4);transition:background .8s .6s, box-shadow .8s .6s}
-html.phone .finale.open .f-text{background:rgba(16,11,5,.82);box-shadow:0 0 0 calc(var(--u)*.3) rgba(227,181,74,.75), 0 calc(var(--u)*1) calc(var(--u)*5) rgba(0,0,0,.55)}
+html.phone .finale.open .f-text{background:linear-gradient(180deg,#1d1409,#120c05);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 0 0 calc(var(--u)*.3) rgba(227,181,74,.75), 0 calc(var(--u)*1) calc(var(--u)*5) rgba(0,0,0,.55)}
+html.phone .finale.open .rays{opacity:.35;transition:opacity 1s .6s}
 html.phone .f-date{color:#f7dc8f}
 html.phone .f-title{color:#fff8e6;text-shadow:0 calc(var(--u)*.3) calc(var(--u)*1.2) rgba(0,0,0,.7)}
 html.phone .f-verse{color:#f7dc8f}
