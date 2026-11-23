@@ -217,6 +217,8 @@ body.nohud #stage{padding-top:calc(var(--u)*3.6);padding-bottom:calc(var(--u)*3.
 .seg{display:flex;border:2px solid var(--gold);border-radius:99px;overflow:hidden}
 .seg button{border:0;background:transparent;padding:calc(var(--u)*.7) calc(var(--u)*2.4);font-size:calc(var(--u)*2);font-weight:800}
 .seg button.on{background:var(--gold);color:#1d1407}
+.seg button .lvn,.seg button .lvr{white-space:nowrap}
+.seg button .lvr{font-size:.82em;font-weight:700;opacity:.85}
 .stepper{display:flex;align-items:center;gap:calc(var(--u)*1)}
 .stepper button{width:calc(var(--u)*4);height:calc(var(--u)*4);border-radius:50%;border:2px solid var(--gold);background:transparent;font-size:calc(var(--u)*2.4);font-weight:800;line-height:1}
 .stepper span{font-family:var(--display);font-size:calc(var(--u)*3.2);min-width:calc(var(--u)*3);text-align:center;color:var(--gold-hi)}
@@ -724,6 +726,7 @@ html.port .title-scr .row{flex-wrap:wrap;justify-content:center}
 html.port .setup{padding:calc(var(--u)*1.8) calc(var(--u)*2)}
 html.port .setup .lab{min-width:100%}
 html.port .seg button{padding:calc(var(--u)*.7) calc(var(--u)*1.3);font-size:calc(var(--u)*1.85)}
+html.port .seg button .lvr{display:block;line-height:1.15}
 html.port .tedit{grid-template-columns:1fr}
 html.port .gintro{flex-direction:column;text-align:center;gap:calc(var(--u)*2)}
 html.port .gintro .gate{height:calc(var(--u)*20)}
@@ -853,7 +856,7 @@ html.phone .f-chag{background:linear-gradient(180deg,#fff2c4,#e3b54a);color:#1d1
       <h3>הכנה (חמש דקות)</h3>
       <ol>
         <li>פותחים את הקובץ במחשב שמחובר למקרן ולוחצים ⛶ למסך מלא.</li>
-        <li>לוחצים "יוצאים לדרך" ובוחרים: בנים או בנות, שכבת גיל, ושם בית הספר או הכיתה (אפשר גם להעלות לוגו).</li>
+        <li>לוחצים "יוצאים לדרך" ובוחרים: בנים או בנות, רמה, ושם בית הספר או הכיתה (אפשר גם להעלות לוגו).</li>
         <li>בוחרים כמה קבוצות ונותנים להן שמות.</li>
       </ol>
       <h3>הקבוצות</h3>
@@ -863,7 +866,7 @@ html.phone .f-chag{background:linear-gradient(180deg,#fff2c4,#e3b54a);color:#1d1
       <ul>
         <li><b>חמישה שערים:</b> שאלות, אמת או שקר, פענוח מילים, חידות "מי אני?", וציר זמן עם שאלת זהב.</li>
         <li><b>גלגל ההפתעות</b> בין השערים: אתגר קצב לכל הכיתה, פנטומימה, זיכרון, תיבת הפתעה ו"כפול או כלום".</li>
-        <li><b>שלוש רמות:</b> כיתות א׳-ג׳, ד׳-ה׳ ו-ו׳-ח׳. הפנייה מותאמת לבנים או לבנות.</li>
+        <li><b>שלוש רמות:</b> בסיסית (א׳-ג׳), בינונית (ד׳-ה׳) וקשה (ו׳-ח׳). הפנייה מותאמת לבנים או לבנות.</li>
         <li><b>סיום:</b> פודיום מנצחים, הדלקת האור המשותף, ואפשרות להוריד את התוצאות לאקסל.</li>
       </ul>
       <h3>התאמה לבית הספר</h3>
@@ -932,7 +935,9 @@ const CONFIG = {
 const TEAM_COLORS = ['#4b9bff','#ff5a5f','#36c07f','#ffb020','#b07cff','#22c3c3'];
 const DAYS = [0, 11, 22, 33, 44, 53];
 // שלוש רמות: e = כיתות א׳-ג׳ (קלה, נבנתה חדשה) · k = כיתות ד׳-ה׳ · g = כיתות ו׳-ח׳
-const LEVELS = { e:'כיתות א׳-ג׳', k:'כיתות ד׳-ה׳', g:'כיתות ו׳-ח׳' };
+const LEVELS = { e:'רמה בסיסית (א׳-ג׳)', k:'רמה בינונית (ד׳-ה׳)', g:'רמה קשה (ו׳-ח׳)' };
+// על הכפתורים: שם הרמה, ומתחתיו (בטלפון) או לידו טווח הכיתות
+const lvBtn = k => { const m = (LEVELS[k] || '').match(/^רמה (\S+) (\(.+\))$/); return m ? `<span class="lvn">${m[1]}</span> <small class="lvr">${m[2]}</small>` : (LEVELS[k] || ''); };
 const TIMERS = { e:{ mc:30, tf:20, scramble:45, timeline:60, risk:30 }, k:{ mc:25, tf:15, scramble:40, timeline:50, risk:25 }, g:{ mc:25, tf:15, scramble:30, timeline:45, risk:30 } };
 
 /* ============================================================
@@ -1387,7 +1392,7 @@ function choiceCard(it, i, n, canDel, title){
 }
 function edRender(){
   const secs = SECS(), s = secs[QED.sec], list = edList();
-  $('#qedLevels').innerHTML = Object.entries(LEVELS).map(([k, v]) => `<button data-lv="${k}" class="${QED.L === k ? 'on' : ''}">${v}</button>`).join('');
+  $('#qedLevels').innerHTML = Object.keys(LEVELS).map(k => `<button data-lv="${k}" class="${QED.L === k ? 'on' : ''}">${lvBtn(k)}</button>`).join('');
   $('#qedTabs').innerHTML = secs.map((x, i) => `<button data-sec="${i}" class="${i === QED.sec ? 'on' : ''}">${x.name}</button>`).join('');
   $('#qedHelp').textContent = HELP[s.type] || '';
   let html = '';
@@ -1504,7 +1509,7 @@ function edSave(){
   if (probs.length){
     const p = probs[0]; QED.L = p.L; QED.sec = p.sec; edRender(); edMarkBad(true);
     const el = p.path && $('#qedList').querySelector(`[data-p="${p.path}"]`); if (el){ el.scrollIntoView({ block:'center' }); el.focus(); }
-    edMsg(`לא נשמר: ${p.msg} (${LEVELS[p.L]} · ${SECS()[p.sec].name}).`, 'err'); return false;
+    edMsg(`לא נשמר: ${p.msg} · ${LEVELS[p.L]} · ${SECS()[p.sec].name}.`, 'err'); return false;
   }
   applyQ(QED.data); S.wheelCfg = clone(QED.wheel); S.ptsCfg = Object.fromEntries(PTS_ROWS.map(([k]) => [k, Math.round(+QED.pts[k])])); save(); buildSteps();
   const ok = saveQ(QED.data); QED.dirty = false;
@@ -2449,7 +2454,7 @@ const R = {
       stage.innerHTML = `<div class="setup card fade-up">
         <h2>מי משחק היום?</h2>
         <div class="line"><span class="lab">הקהל:</span><div class="seg"><button data-a="m" class="${S.aud === 'm' ? 'on' : ''}">בנים</button><button data-a="f" class="${S.aud === 'f' ? 'on' : ''}">בנות</button></div></div>
-        <div class="line"><span class="lab">גיל:</span><div class="seg">${Object.entries(LEVELS).map(([k, v]) => `<button data-l="${k}" class="${S.level === k ? 'on' : ''}">${v}</button>`).join('')}</div></div>
+        <div class="line"><span class="lab">רמה:</span><div class="seg">${Object.keys(LEVELS).map(k => `<button data-l="${k}" class="${S.level === k ? 'on' : ''}">${lvBtn(k)}</button>`).join('')}</div></div>
         <div class="line"><span class="lab">בית ספר / כיתה:</span><div class="brandrow">
           <input type="text" id="schoolName" maxlength="40" placeholder="למשל: תלמוד תורה אור · כיתה ד׳2" value="${esc(S.school || '')}">
           ${S.schoolLogo ? `<img class="lprev" src="${S.schoolLogo}" alt="לוגו">` : ''}
