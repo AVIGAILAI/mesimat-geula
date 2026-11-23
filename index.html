@@ -491,6 +491,7 @@ html.phone .opts .opt{background:linear-gradient(180deg,rgba(var(--oc),.36),rgba
 .rest{display:flex;gap:calc(var(--u)*2);color:var(--muted);font-weight:700;font-size:calc(var(--u)*1.9)}
 
 /* credits */
+.credits .fb{color:var(--gold-hi);font-weight:800;font-size:calc(var(--u)*1.9)}
 .credits{width:min(100%,calc(var(--u)*86));padding:calc(var(--u)*2.2) calc(var(--u)*4);text-align:center;display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*1.1)}
 .credits .k{color:var(--muted);font-weight:700;font-size:calc(var(--u)*2)}
 .credits h2{font-family:var(--display);font-weight:400;font-size:calc(var(--u)*6);margin:0;line-height:1.05}
@@ -2923,6 +2924,7 @@ const R = {
       </div>
       <div class="cta">רוצים משחק כזה לחג הבא? אשמח לבנות אותו בשבילכם</div>
       ${c.length ? `<div class="contact">${c.map(x => `<span>${x}</span>`).join('')}</div>` : ''}
+      ${c.length ? `<div class="fb">${G('שיחקתם? אשמח לשמוע איך היה 🙂', 'שיחקתן? אשמח לשמוע איך היה 🙂')}</div>` : ''}
       <div class="export-row"><button class="btn-small" id="expBtn2">📥 הורדת התוצאות לאקסל</button><button class="btn-ghost again" id="againBtn">משחק חדש</button></div>
     </div>`;
     $('#expBtn2').onclick = exportResults;
