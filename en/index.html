@@ -172,6 +172,8 @@ body.nohud #stage{padding-top:calc(var(--u)*3.6);padding-bottom:calc(var(--u)*3.
 #next[hidden]{display:none}
 #next.pulse{animation:pulse 1.4s infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 calc(var(--u)*1) rgba(227,181,74,.25),0 0 calc(var(--u)*4) rgba(227,181,74,.7)}}
+#tapTip{position:fixed;left:50%;bottom:calc(var(--u)*9);translate:-50% 0;z-index:80;width:max-content;max-width:min(92vw,calc(var(--u)*90));padding:calc(var(--u)*1.2) calc(var(--u)*2.4);border-radius:calc(var(--u)*1.6);background:rgba(22,18,13,.97);border:2px solid var(--gold);color:#fff;font-weight:800;font-size:calc(var(--u)*2.3);line-height:1.35;text-align:center;box-shadow:0 calc(var(--u)*.6) calc(var(--u)*3) rgba(0,0,0,.6);opacity:0;transform:translateY(calc(var(--u)*1));transition:opacity .25s,transform .25s;pointer-events:none}
+#tapTip.on{opacity:1;transform:none}
 
 /* generic */
 .kicker{color:var(--gold);font-weight:800;font-size:calc(var(--u)*1.7);letter-spacing:.03em}
@@ -2387,6 +2389,7 @@ let animTok = 0;
 const later = (fn, ms) => seqTimers.push(setTimeout(fn, ms));
 
 function setNext(label, show = true, pulse = false){
+  hideTapTip();
   const n = $('#next'); n.hidden = !show; n.textContent = label || 'Next'; n.classList.toggle('pulse', pulse);
   fitScores();
 }
@@ -2398,6 +2401,28 @@ function fitScores(){
   const c = box.children; if (c.length > 1 && c[c.length - 1].offsetTop > c[0].offsetTop + 2) box.classList.add('tight');
 }
 addEventListener('resize', () => fitScores());
+// לחיצה על תשובה לפני החשיפה: הסבר קצר והבהוב של כפתור החשיפה (התלמידים עונים בקול, המורה חושף/ת)
+let tipTimer = 0, tipPulsed = false;
+function hideTapTip(){
+  clearTimeout(tipTimer);
+  const t = $('#tapTip'); if (t) t.classList.remove('on');
+  if (tipPulsed) { $('#next').classList.remove('pulse'); tipPulsed = false; }
+}
+function showTapTip(){
+  let t = $('#tapTip');
+  if (!t) { t = document.createElement('div'); t.id = 'tapTip'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+  t.textContent = 'Students answer out loud 🙂 To see the answer, click “Reveal the answer”';
+  t.classList.add('on');
+  const n = $('#next');
+  if (!n.hidden && !n.classList.contains('pulse')) { n.classList.add('pulse'); tipPulsed = true; }
+  clearTimeout(tipTimer); tipTimer = setTimeout(hideTapTip, 4000);
+}
+stage.addEventListener('click', e => {
+  const o = e.target.closest('.opts .opt, .tf .opt');
+  if (!o || o.closest('.q.revealed') || o.classList.contains('correct') || o.classList.contains('dim')) return;
+  showTapTip();
+});
+document.addEventListener('click', e => { if (e.target.closest('#next')) hideTapTip(); }, true);
 function qLabel(st){
   const g = GATES[st.g], n = itemsOf(g).length;
   return `Gate ${st.g + 1} · ${gv(g, 'name')}${n > 1 ? ` · ${st.i + 1} of ${n}` : ''}`;
@@ -2413,7 +2438,7 @@ function renderChoice(it, opts){
     <div class="qtop"><div class="kicker">${opts.label}</div>${timerHTML()}</div>
     <div class="qtext fade-up">${it.q}</div>${mediaHTML(it)}
     <div class="opts">${it.o.map((o, i) => `<div class="opt card fade-up" data-i="${i}" style="animation-delay:${.15 + i * .1}s"><span class="n">${i + 1}</span><span>${o}</span></div>`).join('')}</div>
-    <div class="hint">Hold up fingers: 1 · 2 · 3 · 4</div>
+    <div class="hint">Hold up fingers: 1 · 2 · 3 · 4, then click “Reveal the answer”</div>
     <div class="after"></div></div>`;
   watchFit();
   startTimer(opts.sec);
@@ -2551,6 +2576,7 @@ const R = {
         <div class="opt card t fade-up" data-v="1" style="animation-delay:.2s">✔ True</div>
         <div class="opt card f fade-up" data-v="0" style="animation-delay:.3s">✘ False</div>
       </div>
+      <div class="hint">Answer out loud: true or false? Then click “Reveal the answer”</div>
       <div class="after"></div></div>`;
     startTimer(T().tf);
     let revealed = false;
@@ -2559,6 +2585,7 @@ const R = {
       if (revealed) return;
       revealed = true; stopTimer(); sfx.correct();
       stage.querySelectorAll('.tf .opt').forEach(o => o.classList.add((o.dataset.v === '1') === it.a ? 'correct' : 'dim'));
+      if ($('.hint')) $('.hint').remove();
       $('.after').innerHTML = `<div class="explain fade-up">${it.x}</div>` + pickerHTML(gatePts(st.g));
       bindPicker(); setNext('Next'); return true;
     };
