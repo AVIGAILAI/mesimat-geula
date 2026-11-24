@@ -31,6 +31,9 @@
   .size{color:var(--muted);font-size:15px;margin-top:10px}
   .phone{display:none;margin:22px auto 0;max-width:520px;padding:14px 18px;border-radius:14px;background:rgba(227,181,74,.12);border:1px solid var(--line);font-weight:700;font-size:17px}
   @media (max-width:820px), (pointer:coarse){ .phone{display:block} }
+  .demo{margin:34px auto 0;max-width:720px}
+  .demo h2{margin:0 0 10px;font-size:20px;color:var(--gold-hi)}
+  .demo video{display:block;width:100%;aspect-ratio:16/9;border-radius:16px;border:1px solid var(--line);background:#000;box-shadow:0 10px 40px rgba(0,0,0,.5)}
   .steps{list-style:none;padding:0;margin:40px 0 0;display:grid;gap:12px;text-align:left}
   .steps li{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:18px}
   .steps b.n{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:"Suez One",sans-serif;font-weight:400;color:#1d1407;background:linear-gradient(180deg,var(--gold-hi),var(--gold))}
@@ -60,6 +63,11 @@
     <div class="size">One file, about 0.6MB</div>
   </div>
   <div class="phone">The game is made for a computer connected to a projector. If you opened this link on a phone, send it to the classroom computer and download it there.</div>
+
+  <div class="demo">
+    <h2>Here's how it looks in class ▶</h2>
+    <video src="demo.mp4" poster="demo.jpg" controls playsinline preload="none"></video>
+  </div>
 
   <ol class="steps">
     <li><b class="n">1</b><div>Download the game to the classroom computer, the one connected to the projector.<small>Just once. It's best to save the file on the desktop.</small></div></li>
